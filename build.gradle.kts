@@ -55,4 +55,6 @@ dependencyManagement {
 tasks.withType<Test> {
     useJUnitPlatform()
 
+    // avoid dynamic agent loading warning for JDK21
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
 }

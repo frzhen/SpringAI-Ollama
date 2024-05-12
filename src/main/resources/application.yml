@@ -13,3 +13,8 @@ spring:
   output:
     ansi:
       enabled: always
+  ai:
+    ollama:
+      chat:
+        options:
+          model: llama3
