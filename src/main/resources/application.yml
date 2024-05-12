@@ -1,0 +1,15 @@
+jdk:
+    vendor:
+        name: Oracle-JDK
+        version: ${java.version}
+gradle:
+    version: 8.7
+    DSL: Kotlin
+spring:
+  application:
+    name: Ollama Spring AI DEMO
+    version: 0.0.1-SNAPSHOT
+    description: DEMO AI project for using Local Models through Ollama
+  output:
+    ansi:
+      enabled: always
