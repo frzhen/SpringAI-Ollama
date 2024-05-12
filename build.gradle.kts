@@ -23,13 +23,27 @@ repositories {
 }
 
 extra["springAiVersion"] = "0.8.1"
+extra["openAPIVersion"] = "2.5.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.ai:spring-ai-ollama-spring-boot-starter")
+    // OpenAPI
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("openAPIVersion")}")
+
+    // lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+
+    // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // lombok for test
+    testCompileOnly("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
+
+    // explicit declare JUnit5 for testing ready for gradle 9
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
@@ -40,4 +54,5 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
 }
