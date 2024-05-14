@@ -11,6 +11,8 @@ public interface OllamaAiService {
 
     Answer getAnswer(Question question);
 
+    Answer getAnswerInChinese(Question question);
+
     Answer getAnswerEdu(Question question);
 
     Answer getCapitalByString(GetCapitalRequest request);

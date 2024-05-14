@@ -49,6 +49,18 @@ public class OllamaAiServiceImpl implements OllamaAiService {
     }
 
     @Override
+    public Answer getAnswerInChinese(Question question) {
+        String systemChinesePrompt = """
+                Your answer should be all in Simplified Chinese.
+                """;
+        String messageAddOnWithChinese = question.question() + systemChinesePrompt;
+
+        Prompt prompt = new Prompt(messageAddOnWithChinese);
+        ChatResponse response = chatClient.call(prompt);
+        return new Answer(response.getResult().getOutput().getContent());
+    }
+
+    @Override
     public Answer getAnswerEdu(Question question) {
         SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(systemPromptEduTemplate);
         Message systemMessage = systemPromptTemplate.createMessage();

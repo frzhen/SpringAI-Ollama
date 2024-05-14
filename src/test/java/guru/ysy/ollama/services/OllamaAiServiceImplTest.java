@@ -99,4 +99,17 @@ class OllamaAiServiceImplTest {
         assertThat(answer).isNotNull();
         System.out.println(answer);
     }
+
+    @Order(7)
+    @Test
+    @DisplayName("测试中文问题")
+    void getAnswerInChinese() {
+        Question question = new Question("你知道斐波那契数列吗？");
+        System.out.println("问题: " + question.question());
+        System.out.println("答案:");
+
+        Answer answer = ollamaAiService.getAnswerInChinese(question);
+        assertThat(answer.answer()).isNotBlank();
+        System.out.println(answer.answer());
+    }
 }

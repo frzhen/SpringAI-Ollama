@@ -30,6 +30,12 @@ public class QuestionController {
         return ResponseEntity.ok(ollamaAiService.getAnswer(question));
     }
 
+    @Operation(summary = "Ask any question to get an answer in Chinese")
+    @PostMapping("/ask/cn")
+    public ResponseEntity<Answer> askCNQuestion(@RequestBody Question question) {
+        return ResponseEntity.ok(ollamaAiService.getAnswerInChinese(question));
+    }
+
     @Operation(summary = "Ask any question to get an answer in string in education mode")
     @PostMapping("/ask/edu")
     public ResponseEntity<Answer> askEduQuestion(@RequestBody Question question) {
