@@ -24,7 +24,7 @@ class OllamaAiServiceImplTest {
     @Test
     @DisplayName("test Get Answer in String")
     void getAnswer() {
-        Question question = new Question("Tell me a funny joke about dog");
+        Question question = new Question("Tell me about fibonacci sequence");
 
         System.out.println("Question: " + question.question());
         System.out.println("Got the answer:");
@@ -35,6 +35,20 @@ class OllamaAiServiceImplTest {
     }
 
     @Order(2)
+    @Test
+    @DisplayName("test Get Answer with education field in String")
+    void getAnswerEdu() {
+        Question question = new Question("Tell me about fibonacci sequence");
+
+        System.out.println("Question: " + question.question());
+        System.out.println("Got the answer:");
+
+        Answer answer = ollamaAiService.getAnswerEdu(question);
+        assertThat(answer.answer()).isNotBlank();
+        System.out.println(answer.answer());
+    }
+
+    @Order(3)
     @Test
     @DisplayName("test Get Capital name in String")
     void getCapitalByString() {
@@ -47,7 +61,7 @@ class OllamaAiServiceImplTest {
         System.out.println(answer.answer());
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     @DisplayName("test Get Capital name by Json")
     void getCapitalByJson() {
@@ -60,7 +74,7 @@ class OllamaAiServiceImplTest {
         System.out.println(answer.answer());
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     @DisplayName("test Get Capital name with info in String")
     void getCapitalWithInfoByString() {
@@ -73,7 +87,7 @@ class OllamaAiServiceImplTest {
         System.out.println(answer.answer());
     }
 
-    @Order(5)
+    @Order(6)
     @Test
     @DisplayName("test Get Capital name with info by Json")
     void getCapitalWithInfoByJson() {

@@ -4,14 +4,17 @@ import guru.ysy.ollama.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.ollama.OllamaChatClient;
 import org.springframework.ai.parser.BeanOutputParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +26,9 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class OllamaAiServiceImpl implements OllamaAiService {
+
+    @Value("classpath:templates/system-prompt-edu.st")
+    private Resource systemPromptEduTemplate;
 
     @Value("classpath:templates/get-capital-String-prompt.st")
     private Resource getCapitalStringPromptTemplate;
@@ -38,6 +44,19 @@ public class OllamaAiServiceImpl implements OllamaAiService {
     @Override
     public Answer getAnswer(Question question) {
         Prompt prompt = new Prompt(question.question());
+        ChatResponse response = chatClient.call(prompt);
+        return new Answer(response.getResult().getOutput().getContent());
+    }
+
+    @Override
+    public Answer getAnswerEdu(Question question) {
+        SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(systemPromptEduTemplate);
+        Message systemMessage = systemPromptTemplate.createMessage();
+
+        PromptTemplate promptTemplate = new PromptTemplate(question.question());
+        Message usrMessage = promptTemplate.createMessage();
+        List<Message> messages = List.of(systemMessage, usrMessage);
+        Prompt prompt = new Prompt(messages);
         ChatResponse response = chatClient.call(prompt);
         return new Answer(response.getResult().getOutput().getContent());
     }
