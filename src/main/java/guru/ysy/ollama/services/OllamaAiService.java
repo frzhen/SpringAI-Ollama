@@ -1,8 +1,6 @@
 package guru.ysy.ollama.services;
 
-import guru.ysy.ollama.model.Answer;
-import guru.ysy.ollama.model.GetCapitalRequest;
-import guru.ysy.ollama.model.Question;
+import guru.ysy.ollama.model.*;
 
 /**
  * @Author: Fred R. Zhen
@@ -15,9 +13,9 @@ public interface OllamaAiService {
 
     Answer getCapitalByString(GetCapitalRequest request);
 
-    Answer getCapitalByJson(GetCapitalRequest request);
+    GetCapitalResponse getCapitalByJson(GetCapitalRequest request);
 
     Answer getCapitalWithInfoByString(GetCapitalRequest request);
 
-    Answer getCapitalWithInfoByJson(GetCapitalRequest request);
+    GetCapitalWithInfoResponse getCapitalWithInfoByJson(GetCapitalRequest request);
 }

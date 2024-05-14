@@ -1,8 +1,6 @@
 package guru.ysy.ollama.services;
 
-import guru.ysy.ollama.model.Answer;
-import guru.ysy.ollama.model.GetCapitalRequest;
-import guru.ysy.ollama.model.Question;
+import guru.ysy.ollama.model.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +55,7 @@ class OllamaAiServiceImplTest {
 
         System.out.printf("Got the capital answer for: %s%n", request.stateOrCountry());
 
-        Answer answer = ollamaAiService.getCapitalByJson(request);
+        GetCapitalResponse answer = ollamaAiService.getCapitalByJson(request);
         assertThat(answer.answer()).isNotBlank();
         System.out.println(answer.answer());
     }
@@ -83,8 +81,8 @@ class OllamaAiServiceImplTest {
 
         System.out.printf("Got the capital answer with JSON for: %s%n", request.stateOrCountry());
 
-        Answer answer = ollamaAiService.getCapitalWithInfoByJson(request);
-        assertThat(answer.answer()).isNotBlank();
-        System.out.println(answer.answer());
+        GetCapitalWithInfoResponse answer = ollamaAiService.getCapitalWithInfoByJson(request);
+        assertThat(answer).isNotNull();
+        System.out.println(answer);
     }
 }

@@ -1,8 +1,6 @@
 package guru.ysy.ollama.controllers;
 
-import guru.ysy.ollama.model.Answer;
-import guru.ysy.ollama.model.GetCapitalRequest;
-import guru.ysy.ollama.model.Question;
+import guru.ysy.ollama.model.*;
 import guru.ysy.ollama.services.OllamaAiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +38,7 @@ public class QuestionController {
 
     @Operation(summary = "Ask the name of a state or a country's capital in JSON format with AI")
     @PostMapping("/capital/json")
-    public ResponseEntity<Answer> getCapitalNameByJson(@RequestBody GetCapitalRequest request) {
+    public ResponseEntity<GetCapitalResponse> getCapitalNameByJson(@RequestBody GetCapitalRequest request) {
         return ResponseEntity.ok(ollamaAiService.getCapitalByJson(request));
     }
 
@@ -52,7 +50,7 @@ public class QuestionController {
 
     @Operation(summary = "Ask the name of a state or a country's capital in details in JSON format with AI")
     @PostMapping("/capital/details/json")
-    public ResponseEntity<Answer> getCapitalNameWithInfoByJson(@RequestBody GetCapitalRequest request) {
+    public ResponseEntity<GetCapitalWithInfoResponse> getCapitalNameWithInfoByJson(@RequestBody GetCapitalRequest request) {
         return ResponseEntity.ok(ollamaAiService.getCapitalWithInfoByJson(request));
     }
 }

@@ -1,22 +1,17 @@
 package guru.ysy.ollama.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.ysy.ollama.model.Answer;
-import guru.ysy.ollama.model.GetCapitalRequest;
-import guru.ysy.ollama.model.Question;
+import guru.ysy.ollama.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.ollama.OllamaChatClient;
+import org.springframework.ai.parser.BeanOutputParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,12 +33,8 @@ public class OllamaAiServiceImpl implements OllamaAiService {
     @Value("classpath:templates/get-capital-String-with-info.st")
     private Resource getCapitalStringWithInfoPromptTemplate;
 
-    @Value("classpath:templates/get-capital-JSON-with-info.st")
-    private Resource getCapitalJSONWithInfoPromptTemplate;
-
     private final OllamaChatClient chatClient;
 
-    private final ObjectMapper mapper;
     @Override
     public Answer getAnswer(Question question) {
         Prompt prompt = new Prompt(question.question());
@@ -58,10 +49,17 @@ public class OllamaAiServiceImpl implements OllamaAiService {
     }
 
     @Override
-    public Answer getCapitalByJson(GetCapitalRequest request) {
-        ChatResponse response = chatClient.call(createPrompt(request, getCapitalJSONPromptTemplate));
-        List<String> properties = List.of("capital");
-        return new Answer(parseResponseJsonToString(response, properties));
+    public GetCapitalResponse getCapitalByJson(GetCapitalRequest request) {
+        BeanOutputParser<GetCapitalResponse> parser = new BeanOutputParser<>(GetCapitalResponse.class);
+        String format = parser.getFormat();
+        PromptTemplate promptTemplate = new PromptTemplate(getCapitalJSONPromptTemplate);
+        Prompt prompt = promptTemplate.create(Map.of(
+                "stateOrCountry",
+                request.stateOrCountry(),
+                "format",
+                format));
+        ChatResponse response = chatClient.call(prompt);
+        return parser.parse(response.getResult().getOutput().getContent());
     }
 
     @Override
@@ -71,43 +69,22 @@ public class OllamaAiServiceImpl implements OllamaAiService {
     }
 
     @Override
-    public Answer getCapitalWithInfoByJson(GetCapitalRequest request) {
-        ChatResponse response = chatClient.call(createPrompt(request, getCapitalJSONWithInfoPromptTemplate));
-        List<String> properties = List.of(
-                "capital",
-                "population-in-mil",
-                "region",
-                "language",
-                "currency",
-                "lat",
-                "lng");
-        return new Answer(parseResponseJsonToString(response, properties));
+    public GetCapitalWithInfoResponse getCapitalWithInfoByJson(GetCapitalRequest request) {
+        BeanOutputParser<GetCapitalWithInfoResponse> parser = new BeanOutputParser<>(
+                GetCapitalWithInfoResponse.class);
+        String format = parser.getFormat();
+        PromptTemplate promptTemplate = new PromptTemplate(getCapitalJSONPromptTemplate);
+        Prompt prompt = promptTemplate.create(Map.of(
+                "stateOrCountry",
+                request.stateOrCountry(),
+                "format",
+                format));
+        ChatResponse response = chatClient.call(prompt);
+        return parser.parse(response.getResult().getOutput().getContent());
     }
 
     private Prompt createPrompt(GetCapitalRequest request, Resource resource) {
         PromptTemplate promptTemplate = new PromptTemplate(resource);
         return promptTemplate.create(Map.of("stateOrCountry", request.stateOrCountry()));
     }
-
-    private String parseResponseJsonToString(ChatResponse response, List<String> properties) {
-        final StringBuilder responseString = new StringBuilder();
-        if (properties != null && !properties.isEmpty()) {
-            try {
-                JsonNode jsonNode = mapper.readTree(response.getResult().getOutput().getContent());
-                for (String property : properties) {
-                    responseString.append(property).append(" : ").append(jsonNode.get(property)).append("\n");
-                }
-                if (responseString.length() >= 2) {
-                    responseString.delete(responseString.length() - 2, responseString.length());
-                }
-            } catch (JsonProcessingException e) {
-                log.error("Ollama AI response format error:", e);
-                responseString.append("Ollama AI response format error");
-            }
-        } else {
-            responseString.append("There is a error in your response");
-        }
-        return responseString.toString();
-    }
-
 }
